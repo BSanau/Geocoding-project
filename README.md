@@ -14,4 +14,4 @@ The company has several needs that we have to fulfill:
 * Near to a Starbucks to have some coffe in the morning.
 * Near to a pub to hanggle out with the colleagues.
 * Far from companies with more than 10 years.
-* Next to a vegan restaurant.
+* Next to a vegan restaurant.  
