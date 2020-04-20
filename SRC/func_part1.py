@@ -35,6 +35,7 @@ def fromJsonToDF (path):
 def fromCSVToDF (path):
     csv = pd.read_csv(path)
     csv = csv.dropna(axis = 0)
+    csv = csv.drop_duplicates()
     csv = csv[["Country", "Latitude", "Longitude"]]
     return csv.rename(columns = {"Country": "Code"})
 
@@ -77,15 +78,20 @@ def cleanDFMongo (df):
 
 
 # Function to find the elements of a dataframe within a location
-def findingLocation (df, latmin, latmax, longmin, longmax):
+def findingLocation (df, latmin, latmax, longmin, longmax, flag):
     lista=[]
     for i in df.index:
         if (df["Latitude"][i] >= latmin and df["Latitude"][i] <= latmax
            and df["Longitude"][i] >= longmin and df["Longitude"][i] <=longmax):
-            lista.append({"Code": df["Code"][i],
-                          "Latitude": df["Latitude"][i],
-                          "Longitude": df["Longitude"][i]
-                             })
+            if flag == 1:
+                lista.append({"Code": df["Code"][i],
+                            "Latitude": df["Latitude"][i],
+                            "Longitude": df["Longitude"][i]
+                                })
+            elif flag == 2:
+                lista.append({ "Latitude": df["Latitude"][i],
+                               "Longitude": df["Longitude"][i]
+                            })
     return pd.DataFrame(lista)
 
 
@@ -116,8 +122,9 @@ def bubbleplot(df, names, colors, markerSize):
             landcolor = 'rgb(217, 217, 217)',
         )
     )
-    
-    fig.show()
+
+    fig.write_html("OUTPUT/bubbleplot.html")
+    return fig
 
 
 # Function to create a circle, given a center (x,y) and a radius (r)
@@ -138,7 +145,8 @@ def addAreaToDF (df, r):
 
 # Function to plot and calculate the allowed area to locate the company
 def areaPlot(df, colors, names):
-    areatot = 0
+    allowed_area = []
+    totarea = 0
 
     fig,ax = plt.subplots(figsize= (8,8))
 
@@ -164,7 +172,8 @@ def areaPlot(df, colors, names):
                 if dif:
                     patch = PolygonPatch(dif, facecolor='#f8f65f', edgecolor='#f8f65f')
                     ax.add_patch(patch)
-            areatot += dif.area
+            allowed_area.append(dif)
+            totarea += dif.area
 
     plt.xlim(-430,-380)
     plt.ylim(4470,4510)
@@ -172,4 +181,5 @@ def areaPlot(df, colors, names):
     plt.ylabel("Latitude (km)", fontsize=12)
     plt.title("Optimum areas", fontsize=18)
     ax.legend(names)
-    return areatot
+    plt.show()
+    return allowed_area, totarea
