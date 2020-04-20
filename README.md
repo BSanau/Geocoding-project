@@ -1,6 +1,5 @@
 # Geocoding-project
-from IPython.display import Image
-Image("INPUT/readmeimage.png")
+![](INPUT/readmeimage.png)
 
 ## Objective
 Find the best location to settle down our company using geocoding libraries and techniques.
